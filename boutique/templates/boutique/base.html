@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LIFEStyle{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'boutique/style.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>LIFEStyle</h1>
+        <p>Votre boutique de vêtements multimarques</p>
+
+
+    <nav>
+        <a href="{% url 'boutique:catalogue' %}">Accueil</a>
+    </nav>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <p>&copy; 2026 LIFEStyle - Tous droits réservés.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "boutique/base.html" %}
+
+{% block title %}Catalogue - LIFEStyle{% endblock %}
+
+{% block content %} <section class="catalogue"> <h2>Notre catalogue</h2> <p>Découvrez nos vêtements de différentes marques.</p>
+
+
+    <form method="get" action="{% url 'boutique:catalogue' %}">
+        <input
+            type="text"
+            name="q"
+            placeholder="Rechercher un produit..."
+            value="{{ recherche }}"
+        >
+
+        <select name="marque">
+            <option value="">Toutes les marques</option>
+
+            {% for marque in marques %}
+                <option
+                    value="{{ marque.id }}"
+                    {% if marque_selectionnee == marque.id|stringformat:"s" %}selected{% endif %}
+                >
+                    {{ marque.nom }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Rechercher</button>
+        <a href="{% url 'boutique:catalogue' %}">Réinitialiser</a>
+    </form>
+
+    <div class="produits">
+        {% for produit in produits %}
+            <article class="produit">
+                <h3>{{ produit.nom }}</h3>
+
+                <p><strong>Marque :</strong> {{ produit.marque.nom }}</p>
+                <p><strong>Prix :</strong> {{ produit.prix }} FCFA</p>
+                <p><strong>Taille :</strong>
+                    {% if produit.taille %}
+                        {{ produit.taille }}
+                    {% else %}
+                        Non précisée
+                    {% endif %}
+                </p>
+                <p><strong>Stock :</strong> {{ produit.stock }}</p>
+
+                <a href="{% url 'boutique:detail_produit' produit.pk %}">
+                    Voir les détails
+                </a>
+            </article>
+        {% empty %}
+            <p>Aucun produit trouvé pour le moment.</p>
+        {% endfor %}
+    </div>
+</section>
+
+
+{% endblock %}

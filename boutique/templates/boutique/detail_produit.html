@@ -1,0 +1,42 @@
+{% extends "boutique/base.html" %}
+
+{% block title %}{{ produit.nom }} - LIFEStyle{% endblock %}
+
+{% block content %} <section class="detail-produit"> <h2>{{ produit.nom }}</h2>
+
+```
+    <p><strong>Marque :</strong> {{ produit.marque.nom }}</p>
+    <p><strong>Pays d'origine :</strong>
+        {% if produit.marque.pays %}
+            {{ produit.marque.pays }}
+        {% else %}
+            Non précisé
+        {% endif %}
+    </p>
+
+    <p><strong>Description :</strong>
+        {% if produit.description %}
+            {{ produit.description }}
+        {% else %}
+            Aucune description disponible.
+        {% endif %}
+    </p>
+
+    <p><strong>Prix :</strong> {{ produit.prix }} FCFA</p>
+    <p><strong>Stock disponible :</strong> {{ produit.stock }}</p>
+
+    <p><strong>Taille :</strong>
+        {% if produit.taille %}
+            {{ produit.taille }}
+        {% else %}
+            Non précisée
+        {% endif %}
+    </p>
+
+    <p><strong>Date d'ajout :</strong> {{ produit.date_ajout }}</p>
+
+    <a href="{% url 'boutique:catalogue' %}">← Retour au catalogue</a>
+</section>
+```
+
+{% endblock %}
