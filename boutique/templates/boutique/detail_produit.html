@@ -1,42 +1,40 @@
 {% extends "boutique/base.html" %}
 
-{% block title %}{{ produit.nom }} - LIFEStyle{% endblock %}
+{% block title %}{{ produit.nom }} — UrbanWear{% endblock %}
 
-{% block content %} <section class="detail-produit"> <h2>{{ produit.nom }}</h2>
-
-```
-    <p><strong>Marque :</strong> {{ produit.marque.nom }}</p>
-    <p><strong>Pays d'origine :</strong>
-        {% if produit.marque.pays %}
-            {{ produit.marque.pays }}
+{% block content %}
+<div class="detail-breadcrumb"><a href="{% url 'boutique:accueil' %}">Accueil</a><span>/</span><a href="{% url 'boutique:catalogue' %}">Collection</a><span>/</span>{{ produit.nom }}</div>
+<section class="detail-produit">
+    {% load static %}
+    <div class="detail-image-wrap">
+        {% if produit.image_fichier %}
+            <img class="detail-image" src="{% static produit.image_fichier %}" alt="{{ produit.nom }}">
         {% else %}
-            Non précisé
+            <img class="detail-image" src="{% static 'boutique/images/photo-a-ajouter.svg' %}" alt="Photo à ajouter pour {{ produit.nom }}">
         {% endif %}
-    </p>
-
-    <p><strong>Description :</strong>
-        {% if produit.description %}
-            {{ produit.description }}
-        {% else %}
-            Aucune description disponible.
-        {% endif %}
-    </p>
-
-    <p><strong>Prix :</strong> {{ produit.prix }} FCFA</p>
-    <p><strong>Stock disponible :</strong> {{ produit.stock }}</p>
-
-    <p><strong>Taille :</strong>
-        {% if produit.taille %}
-            {{ produit.taille }}
-        {% else %}
-            Non précisée
-        {% endif %}
-    </p>
-
-    <p><strong>Date d'ajout :</strong> {{ produit.date_ajout }}</p>
-
-    <a href="{% url 'boutique:catalogue' %}">← Retour au catalogue</a>
+    </div>
+    <div class="detail-copy">
+        <span class="eyebrow">{{ produit.marque.nom }} · {{ produit.get_categorie_display }}</span>
+        <h1>{{ produit.nom }}</h1>
+        <p class="detail-price">{{ produit.prix|floatformat:0 }} <span>FCFA</span></p>
+        <p class="detail-description">
+            {% if produit.description %}
+                {{ produit.description }}
+            {% else %}
+                Découvrez cette pièce de notre sélection multimarque UrbanWear.
+            {% endif %}
+        </p>
+        <p><strong>Taille :</strong> {{ produit.taille|default:"Non précisée" }}</p>
+        <p><strong>Disponibilité :</strong>
+            {% if produit.stock == 0 %}
+                <span class="stock stock-out">Indisponible</span>
+            {% elif produit.stock <= 3 %}
+                <span class="stock stock-low">Plus que {{ produit.stock }} en stock</span>
+            {% else %}
+                <span class="stock stock-in">En stock</span>
+            {% endif %}
+        </p>
+        <a class="button button-dark detail-back" href="{% url 'boutique:catalogue' %}">Continuer la découverte <span aria-hidden="true">→</span></a>
+    </div>
 </section>
-```
-
 {% endblock %}

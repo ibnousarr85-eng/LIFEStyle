@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">UrbanWear</title>
+  <rect width="64" height="64" rx="4" fill="#101d30"/>
+  <path d="M14 14h8v26c0 6 3 9 9 9s9-3 9-9V14h8v27c0 11-6 17-17 17S14 52 14 41z" fill="#e9a23b"/>
+  <path d="M49 14h8v8h-8z" fill="#ffffff"/>
+</svg>

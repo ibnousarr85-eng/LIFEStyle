@@ -1,0 +1,76 @@
+{% extends "boutique/base.html" %}
+{% load static %}
+
+{% block title %}UrbanWear — Le style, en toute liberté{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <img class="hero-photo" src="{% static 'boutique/images/urbanwear-hero.jpg' %}" alt="">
+    <div class="hero-shade"></div>
+    <div class="hero-content">
+        <span class="eyebrow hero-eyebrow">LA MODE MULTIMARQUE, POUR TOUS</span>
+        <h1>Le style,<br>en toute liberté.</h1>
+        <p>Des vêtements, chaussures et accessoires choisis pour toutes les envies. Trouvez les pièces qui vous ressemblent.</p>
+        <a class="button button-light" href="{% url 'boutique:catalogue' %}">Découvrir la collection <span aria-hidden="true">→</span></a>
+        <span class="hero-note">VOS MARQUES PRÉFÉRÉES. VOTRE PROPRE SIGNATURE.</span>
+    </div>
+    <span class="hero-index">URBANWEAR <span>—</span> 01</span>
+</section>
+
+<section class="category-strip" aria-label="Catégories">
+    <a href="{% url 'boutique:catalogue' %}?categorie=vetements"><span class="category-number">01</span><span>Vêtements</span><span aria-hidden="true">↗</span></a>
+    <a href="{% url 'boutique:catalogue' %}?categorie=chaussures"><span class="category-number">02</span><span>Chaussures</span><span aria-hidden="true">↗</span></a>
+    <a href="{% url 'boutique:catalogue' %}?categorie=accessoires"><span class="category-number">03</span><span>Accessoires</span><span aria-hidden="true">↗</span></a>
+</section>
+
+<section class="home-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">FRAÎCHEMENT AJOUTÉS</span>
+            <h2>Les nouveautés</h2>
+        </div>
+        <a class="text-link" href="{% url 'boutique:catalogue' %}?tri=nouveautes">Toute la collection <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="produits">
+        {% for produit in produits_recents %}
+            {% include "boutique/includes/carte_produit.html" with produit=produit %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="brand-band">
+    <div class="brand-band-heading">
+        <span class="eyebrow">UNE SÉLECTION MULTIMARQUE</span>
+        <h2>Les marques</h2>
+    </div>
+    <div class="brand-list">
+        {% for marque in marques %}
+            <a href="{% url 'boutique:catalogue' %}?marque={{ marque.pk }}">{{ marque.nom }} <span aria-hidden="true">↗</span></a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="home-section home-featured">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">DISPONIBLES DÈS MAINTENANT</span>
+            <h2>À découvrir</h2>
+        </div>
+        <a class="text-link" href="{% url 'boutique:catalogue' %}?disponible=1">Voir les articles en stock <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="produits">
+        {% for produit in produits_disponibles %}
+            {% include "boutique/includes/carte_produit.html" with produit=produit %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="home-promise">
+    <span class="promise-mark">U.</span>
+    <div>
+        <span class="eyebrow">URBANWEAR — MODE MULTIMARQUE</span>
+        <h2>Votre style n'a<br>pas de frontières.</h2>
+    </div>
+    <a class="button button-dark" href="{% url 'boutique:catalogue' %}">Trouver votre style <span aria-hidden="true">→</span></a>
+</section>
+{% endblock %}

@@ -1,33 +1,55 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}LIFEStyle{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'boutique/style.css' %}">
+    <meta name="theme-color" content="#101d30">
+    <title>{% block title %}UrbanWear{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'boutique/style.css' %}?v=8">
 </head>
-
 <body>
-    <header>
-        <h1>LIFEStyle</h1>
-        <p>Votre boutique de vêtements multimarques</p>
-
-
-    <nav>
-        <a href="{% url 'boutique:catalogue' %}">Accueil</a>
-    </nav>
-</header>
-
-<main>
-    {% block content %}
-    {% endblock %}
-</main>
-
-<footer>
-    <p>&copy; 2026 LIFEStyle - Tous droits réservés.</p>
-</footer>
-
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{% url 'boutique:accueil' %}" aria-label="UrbanWear, accueil">
+                <img src="{% static 'boutique/logo.svg' %}" alt="" class="brand-logo">
+                <span class="brand-copy">
+                    <strong>URBAN<span>WEAR</span></strong>
+                    <small>LE STYLE, EN TOUTE LIBERTÉ</small>
+                </span>
+            </a>
+            <nav class="main-nav" aria-label="Navigation principale">
+                <a href="{% url 'boutique:accueil' %}">Accueil</a>
+                <a href="{% url 'boutique:catalogue' %}">La collection</a>
+                <a href="{% url 'boutique:catalogue' %}?categorie=vetements">Vêtements</a>
+                <a href="{% url 'boutique:catalogue' %}?categorie=chaussures">Chaussures</a>
+                <a href="{% url 'boutique:catalogue' %}?categorie=accessoires">Accessoires</a>
+            </nav>
+            <a class="header-cta" href="{% url 'boutique:catalogue' %}">Explorer <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <a class="brand footer-brand" href="{% url 'boutique:accueil' %}">
+                <img src="{% static 'boutique/logo.svg' %}" alt="" class="brand-logo">
+                <span class="brand-copy">
+                    <strong>URBAN<span>WEAR</span></strong>
+                    <small>LE STYLE, EN TOUTE LIBERTÉ</small>
+                </span>
+            </a>
+            <p>Une boutique multimarque pour toutes celles et ceux qui aiment affirmer leur style.</p>
+            <div class="footer-links">
+                <a href="{% url 'boutique:catalogue' %}">La collection</a>
+                <a href="{% url 'boutique:catalogue' %}?categorie=accessoires">Accessoires</a>
+            </div>
+            <small class="copyright">&copy; {% now "Y" %} UrbanWear. Prix affichés en FCFA.</small>
+        </div>
+    </footer>
 </body>
 </html>

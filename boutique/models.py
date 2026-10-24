@@ -12,9 +12,18 @@ class Marque(models.Model):
         return self.nom
  
 class Produit(models.Model):
+    CATEGORIE_CHOICES = [
+        ("vetements", "Vêtements"),
+        ("chaussures", "Chaussures"),
+        ("accessoires", "Accessoires"),
+    ]
+
     nom = models.CharField(max_length=120)
     marque = models.ForeignKey(
         Marque, on_delete=models.PROTECT, related_name="produits")
+    categorie = models.CharField(
+        max_length=20, choices=CATEGORIE_CHOICES, default="vetements"
+    )
     description = models.TextField(blank=True)
     prix = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)

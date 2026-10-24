@@ -1,60 +1,82 @@
 {% extends "boutique/base.html" %}
 
-{% block title %}Catalogue - LIFEStyle{% endblock %}
+{% block title %}La collection — UrbanWear{% endblock %}
 
-{% block content %} <section class="catalogue"> <h2>Notre catalogue</h2> <p>Découvrez nos vêtements de différentes marques.</p>
+{% block content %}
+<section class="catalogue">
+    <div class="catalogue-heading">
+        <span class="eyebrow">URBANWEAR — LA COLLECTION</span>
+        <h1>Trouvez votre style.</h1>
+        <p>Des vêtements, chaussures et accessoires pour toutes les envies.</p>
+    </div>
+    <div class="catalogue-layout">
+        <aside class="filter-panel">
+            <h2>Affiner la sélection</h2>
+            <form method="get" action="{% url 'boutique:catalogue' %}" class="filter-form">
+                <label for="search">Recherche</label>
+                <input id="search" type="search" name="q" placeholder="Produit ou marque" value="{{ recherche }}">
 
+                <label for="category">Catégorie</label>
+                <select id="category" name="categorie">
+                    <option value="">Toutes les catégories</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if categorie_selectionnee == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
 
-    <form method="get" action="{% url 'boutique:catalogue' %}">
-        <input
-            type="text"
-            name="q"
-            placeholder="Rechercher un produit..."
-            value="{{ recherche }}"
-        >
+                <label for="brand">Marque</label>
+                <select id="brand" name="marque">
+                    <option value="">Toutes les marques</option>
+                    {% for marque in marques %}
+                        <option value="{{ marque.id }}" {% if marque_selectionnee == marque.id|stringformat:"s" %}selected{% endif %}>{{ marque.nom }}</option>
+                    {% endfor %}
+                </select>
 
-        <select name="marque">
-            <option value="">Toutes les marques</option>
+                <label for="size">Taille disponible</label>
+                <input id="size" type="text" name="taille" placeholder="Ex. M ou 42" value="{{ taille_selectionnee }}">
 
-            {% for marque in marques %}
-                <option
-                    value="{{ marque.id }}"
-                    {% if marque_selectionnee == marque.id|stringformat:"s" %}selected{% endif %}
-                >
-                    {{ marque.nom }}
-                </option>
-            {% endfor %}
-        </select>
+                <fieldset class="price-fields">
+                    <legend>Budget (FCFA)</legend>
+                    <label for="price-min">Prix minimum</label>
+                    <input id="price-min" type="number" name="prix_min" min="0" placeholder="Sans minimum" value="{{ prix_min }}">
+                    <label for="price-max">Prix maximum</label>
+                    <input id="price-max" type="number" name="prix_max" min="0" placeholder="Sans maximum" value="{{ prix_max }}">
+                </fieldset>
 
-        <button type="submit">Rechercher</button>
-        <a href="{% url 'boutique:catalogue' %}">Réinitialiser</a>
-    </form>
+                <label for="sort">Trier par</label>
+                <select id="sort" name="tri">
+                    <option value="">Ordre par défaut</option>
+                    <option value="nouveautes" {% if tri_selectionne == "nouveautes" %}selected{% endif %}>Nouveautés</option>
+                    <option value="prix-croissant" {% if tri_selectionne == "prix-croissant" %}selected{% endif %}>Prix croissant</option>
+                    <option value="prix-decroissant" {% if tri_selectionne == "prix-decroissant" %}selected{% endif %}>Prix décroissant</option>
+                </select>
 
-    <div class="produits">
-        {% for produit in produits %}
-            <article class="produit">
-                <h3>{{ produit.nom }}</h3>
+                <label class="availability-filter">
+                    <input type="checkbox" name="disponible" value="1" {% if disponible_selectionne %}checked{% endif %}>
+                    Articles en stock uniquement
+                </label>
+                <button class="button button-dark" type="submit">Appliquer les filtres</button>
+                <a class="reset-link" href="{% url 'boutique:catalogue' %}">Effacer les filtres</a>
+            </form>
+        </aside>
 
-                <p><strong>Marque :</strong> {{ produit.marque.nom }}</p>
-                <p><strong>Prix :</strong> {{ produit.prix }} FCFA</p>
-                <p><strong>Taille :</strong>
-                    {% if produit.taille %}
-                        {{ produit.taille }}
-                    {% else %}
-                        Non précisée
-                    {% endif %}
-                </p>
-                <p><strong>Stock :</strong> {{ produit.stock }}</p>
-
-                <a href="{% url 'boutique:detail_produit' produit.pk %}">
-                    Voir les détails
-                </a>
-            </article>
-        {% empty %}
-            <p>Aucun produit trouvé pour le moment.</p>
-        {% endfor %}
+        <div class="catalogue-results">
+            <div class="results-heading">
+                <span>{{ produits|length }} résultat{{ produits|length|pluralize }}</span>
+                <span>Prix en FCFA</span>
+            </div>
+            <div class="produits">
+                {% for produit in produits %}
+                    {% include "boutique/includes/carte_produit.html" with produit=produit %}
+                {% empty %}
+                    <div class="empty-results">
+                        <h2>Aucun article trouvé</h2>
+                        <p>Essaie de modifier tes filtres ou de lancer une nouvelle recherche.</p>
+                        <a class="button button-dark" href="{% url 'boutique:catalogue' %}">Voir toute la collection</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </section>
-
-
 {% endblock %}

@@ -9,6 +9,6 @@ class MarqueAdmin(admin.ModelAdmin):
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-	list_display = ("nom", "marque", "prix", "stock", "taille")
-	list_filter = ("marque",)
+	list_display = ("nom", "marque", "categorie", "prix", "stock", "taille")
+	list_filter = ("marque", "categorie")
 	search_fields = ("nom", "marque__nom")
