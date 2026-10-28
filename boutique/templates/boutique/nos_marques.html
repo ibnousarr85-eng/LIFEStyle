@@ -1,0 +1,34 @@
+{% extends "boutique/base.html" %}
+
+{% block title %}Nos marques — UrbanWear{% endblock %}
+
+{% block content %}
+<section class="brands-page">
+    <div class="catalogue-heading">
+        <span class="eyebrow">URBANWEAR — NOS PARTENAIRES</span>
+        <h1>Les marques</h1>
+        <p>Découvrez les marques de notre sélection et leurs pièces disponibles.</p>
+    </div>
+    <div class="brand-cards">
+        {% for marque in marques %}
+            <article class="brand-card">
+                <span class="eyebrow">{% if marque.pays %}{{ marque.pays }}{% else %}SÉLECTION URBANWEAR{% endif %}</span>
+                <h2>{{ marque.nom }}</h2>
+                <p>
+                    {% if marque.description %}
+                        {{ marque.description }}
+                    {% else %}
+                        Découvrez les pièces {{ marque.nom }} sélectionnées par UrbanWear.
+                    {% endif %}
+                </p>
+                <a class="text-link" href="{% url 'boutique:catalogue' %}?marque={{ marque.pk }}">
+                    {{ marque.nombre_produits }} article{{ marque.nombre_produits|pluralize }}
+                    <span aria-hidden="true">→</span>
+                </a>
+            </article>
+        {% empty %}
+            <p>Aucune marque n’est disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

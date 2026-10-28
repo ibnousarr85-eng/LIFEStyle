@@ -1,7 +1,9 @@
 {% load static %}
 <article class="produit">
     <a class="product-image-link" href="{% url 'boutique:detail_produit' produit.pk %}" aria-label="Voir {{ produit.nom }}">
-        {% if produit.image_fichier %}
+        {% if produit.image_url %}
+            <img src="{{ produit.image_url }}" alt="{{ produit.nom }}" class="product-photo" loading="lazy">
+        {% elif produit.image_fichier %}
             <img src="{% static produit.image_fichier %}" alt="{{ produit.nom }}" class="product-photo" loading="lazy">
         {% else %}
             <img src="{% static 'boutique/images/photo-a-ajouter.svg' %}" alt="Photo à ajouter pour {{ produit.nom }}" class="product-photo" loading="lazy">
@@ -10,6 +12,7 @@
     <div class="product-info">
         <div class="product-brand">{{ produit.marque.nom }} <span class="category-tag">{{ produit.get_categorie_display }}</span></div>
         <h3><a href="{% url 'boutique:detail_produit' produit.pk %}">{{ produit.nom }}</a></h3>
+        {% if produit.public %}<p class="product-size">{{ produit.get_public_display }}</p>{% endif %}
         <p class="product-size">Taille : {{ produit.taille|default:"Non précisée" }}</p>
         <div class="product-meta">
             <span class="product-price">{{ produit.prix|floatformat:0 }} <small>FCFA</small></span>

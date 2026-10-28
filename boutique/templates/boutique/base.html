@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'boutique/style.css' %}?v=8">
+    <link rel="stylesheet" href="{% static 'boutique/style.css' %}?v=16">
 </head>
 <body>
     <header class="site-header">
@@ -24,14 +24,24 @@
             <nav class="main-nav" aria-label="Navigation principale">
                 <a href="{% url 'boutique:accueil' %}">Accueil</a>
                 <a href="{% url 'boutique:catalogue' %}">La collection</a>
+                <a href="{% url 'boutique:catalogue' %}?public=homme">Homme</a>
+                <a href="{% url 'boutique:catalogue' %}?public=femme">Femme</a>
+                <a href="{% url 'boutique:catalogue' %}?public=enfant">Enfant</a>
                 <a href="{% url 'boutique:catalogue' %}?categorie=vetements">Vêtements</a>
                 <a href="{% url 'boutique:catalogue' %}?categorie=chaussures">Chaussures</a>
                 <a href="{% url 'boutique:catalogue' %}?categorie=accessoires">Accessoires</a>
+                <a href="{% url 'boutique:nos_marques' %}">Nos marques</a>
             </nav>
-            <a class="header-cta" href="{% url 'boutique:catalogue' %}">Explorer <span aria-hidden="true">↗</span></a>
         </div>
     </header>
     <main>
+        {% if messages %}
+            <div class="site-messages" role="status">
+                {% for message in messages %}
+                    <p class="site-message site-message-{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
     <footer class="site-footer">

@@ -7,7 +7,9 @@
 <section class="detail-produit">
     {% load static %}
     <div class="detail-image-wrap">
-        {% if produit.image_fichier %}
+        {% if produit.image_url %}
+            <img class="detail-image" src="{{ produit.image_url }}" alt="{{ produit.nom }}">
+        {% elif produit.image_fichier %}
             <img class="detail-image" src="{% static produit.image_fichier %}" alt="{{ produit.nom }}">
         {% else %}
             <img class="detail-image" src="{% static 'boutique/images/photo-a-ajouter.svg' %}" alt="Photo à ajouter pour {{ produit.nom }}">
@@ -25,6 +27,7 @@
             {% endif %}
         </p>
         <p><strong>Taille :</strong> {{ produit.taille|default:"Non précisée" }}</p>
+        {% if produit.public %}<p><strong>Public :</strong> {{ produit.get_public_display }}</p>{% endif %}
         <p><strong>Disponibilité :</strong>
             {% if produit.stock == 0 %}
                 <span class="stock stock-out">Indisponible</span>

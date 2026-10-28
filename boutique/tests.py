@@ -12,6 +12,7 @@ class BoutiquePagesTests(TestCase):
             nom="Baskets sport",
             marque=cls.nike,
             categorie="chaussures",
+            public="homme",
             description="Chaussures de sport",
             prix="45000.00",
             stock=4,
@@ -42,6 +43,24 @@ class BoutiquePagesTests(TestCase):
         self.assertContains(response, "URBAN")
         self.assertContains(response, "Les nouveautés")
         self.assertContains(response, "Découvrir la collection")
+        self.assertContains(response, "Explorer la boutique")
+        self.assertContains(response, "Par collection")
+        self.assertContains(response, "Par type d’article")
+        self.assertContains(response, "?public=homme")
+        self.assertContains(response, "?public=femme")
+        self.assertContains(response, "?public=enfant")
+        self.assertContains(response, "?categorie=vetements")
+        self.assertContains(response, "?categorie=chaussures")
+        self.assertContains(response, "?categorie=accessoires")
+        self.assertContains(response, "Nos marques")
+        self.assertNotContains(response, "Panier")
+        self.assertNotContains(response, "Mode de paiement")
+        self.assertContains(response, "Des essentiels urbains")
+        self.assertContains(response, "Des robes, des pièces tendance")
+        self.assertContains(response, "Des idées de tenues confortables")
+        self.assertContains(response, "Cardigan bleu enfant")
+        self.assertContains(response, "T-shirt noir imprimé")
+        self.assertContains(response, "Top violet épaules dénudées")
 
     def test_catalogue_filters_by_category(self):
         response = self.client.get(
@@ -52,6 +71,20 @@ class BoutiquePagesTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Baskets sport")
         self.assertNotContains(response, "Veste beige")
+
+    def test_catalogue_filters_by_public(self):
+        response = self.client.get("/catalogue/", {"public": "homme"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Baskets sport")
+        self.assertNotContains(response, "Veste beige")
+
+    def test_child_collection_has_products(self):
+        response = self.client.get("/catalogue/", {"public": "enfant"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Cardigan bleu enfant")
+        self.assertContains(response, "Tenue décontractée enfant")
 
     def test_catalogue_combines_price_size_and_availability_filters(self):
         response = self.client.get(
@@ -109,9 +142,42 @@ class BoutiquePagesTests(TestCase):
         self.assertContains(response, "UrbanWear")
         self.assertContains(response, "45000")
 
+    def test_product_image_url_is_rendered(self):
+        product = Produit.objects.get(nom="Baskets sport")
+        product.image_url = "https://example.com/baskets.jpg"
+        product.save(update_fields=["image_url"])
+
+        response = self.client.get("/catalogue/")
+
+        self.assertContains(response, 'src="https://example.com/baskets.jpg"')
+
+    def test_brand_page_shows_descriptions_and_product_counts(self):
+        self.nike.description = "Une marque de sport."
+        self.nike.save(update_fields=["description"])
+
+        response = self.client.get("/marques/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Une marque de sport.")
+        self.assertContains(response, "1 article")
+        self.assertContains(response, "Test Nike")
+
     def test_store_products_have_categories(self):
         self.assertFalse(Produit.objects.filter(categorie="").exists())
         self.assertSetEqual(
             set(Produit.objects.values_list("categorie", flat=True).distinct()),
             {"vetements", "chaussures", "accessoires"},
         )
+
+    def test_cart_and_checkout_pages_are_removed(self):
+        for path in ("/panier/", "/commande/", "/commande/1/"):
+            with self.subTest(path=path):
+                self.assertEqual(self.client.get(path).status_code, 404)
+
+    def test_product_pages_have_no_cart_actions(self):
+        product = Produit.objects.get(nom="Baskets sport")
+        detail = self.client.get(f"/produit/{product.pk}/")
+        catalogue = self.client.get("/catalogue/")
+
+        self.assertNotContains(detail, "Ajouter au panier")
+        self.assertNotContains(catalogue, "Ajouter au panier")

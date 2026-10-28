@@ -7,7 +7,7 @@
     <div class="catalogue-heading">
         <span class="eyebrow">URBANWEAR — LA COLLECTION</span>
         <h1>Trouvez votre style.</h1>
-        <p>Des vêtements, chaussures et accessoires pour toutes les envies.</p>
+        <p>Des vêtements, chaussures et accessoires pour toutes les envies. Choisissez une collection : <a href="{% url 'boutique:catalogue' %}?public=homme">Homme</a>, <a href="{% url 'boutique:catalogue' %}?public=femme">Femme</a> ou <a href="{% url 'boutique:catalogue' %}?public=enfant">Enfant</a>.</p>
     </div>
     <div class="catalogue-layout">
         <aside class="filter-panel">
@@ -21,6 +21,14 @@
                     <option value="">Toutes les catégories</option>
                     {% for value, label in categories %}
                         <option value="{{ value }}" {% if categorie_selectionnee == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="public">Public</label>
+                <select id="public" name="public">
+                    <option value="">Tous les publics</option>
+                    {% for value, label in publics %}
+                        <option value="{{ value }}" {% if public_selectionne == value %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
 

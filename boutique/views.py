@@ -1,5 +1,5 @@
 from django import forms
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 
 from .models import Marque, Produit
@@ -12,22 +12,59 @@ def accueil(request):
     produits_disponibles = Produit.objects.select_related("marque").filter(
         stock__gt=0
     ).order_by("-pk")[:4]
-    marques = Marque.objects.all()
+    marques = Marque.objects.annotate(nombre_produits=Count("produits"))
+    audiences = [
+        {
+            "value": "homme",
+            "label": "Homme",
+            "description": (
+                "Des essentiels urbains, des sweats et des baskets pour "
+                "composer un look décontracté au quotidien."
+            ),
+            "produits": Produit.objects.select_related("marque").filter(
+                public="homme"
+            ).order_by("-pk")[:2],
+        },
+        {
+            "value": "femme",
+            "label": "Femme",
+            "description": (
+                "Des robes, des pièces tendance et des accessoires pour "
+                "créer des silhouettes qui vous ressemblent."
+            ),
+            "produits": Produit.objects.select_related("marque").filter(
+                public="femme"
+            ).order_by("-pk")[:2],
+        },
+        {
+            "value": "enfant",
+            "label": "Enfant",
+            "description": (
+                "Des idées de tenues confortables et pratiques, pensées "
+                "pour accompagner les journées pleines d’énergie."
+            ),
+            "produits": Produit.objects.select_related("marque").filter(
+                public="enfant"
+            ).order_by("-pk")[:2],
+        },
+    ]
 
     return render(request, "boutique/accueil.html", {
         "produits_recents": produits_recents,
         "produits_disponibles": produits_disponibles,
         "marques": marques,
+        "audiences": audiences,
     })
 
 
 def catalogue(request):
     produits = Produit.objects.select_related("marque").all()
-    marques = Marque.objects.all()
+    marques = Marque.objects.annotate(nombre_produits=Count("produits"))
 
     recherche = request.GET.get("q", "").strip()
     marque_id = request.GET.get("marque", "")
     categorie = request.GET.get("categorie", "")
+    public = request.GET.get("public", "")
     taille = request.GET.get("taille", "").strip()
     prix_min = request.GET.get("prix_min", "").strip()
     prix_max = request.GET.get("prix_max", "").strip()
@@ -45,6 +82,10 @@ def catalogue(request):
     categorie_values = {value for value, _ in Produit.CATEGORIE_CHOICES}
     if categorie in categorie_values:
         produits = produits.filter(categorie=categorie)
+
+    public_values = {value for value, _ in Produit.PUBLIC_CHOICES if value}
+    if public in public_values:
+        produits = produits.filter(public=public)
 
     if taille:
         size_filter = Q(taille__iexact=taille) | Q(taille__icontains=taille)
@@ -96,9 +137,15 @@ def catalogue(request):
         "produits": produits,
         "marques": marques,
         "categories": Produit.CATEGORIE_CHOICES,
+        "publics": [
+            (value, label)
+            for value, label in Produit.PUBLIC_CHOICES
+            if value
+        ],
         "recherche": recherche,
         "marque_selectionnee": marque_id,
         "categorie_selectionnee": categorie,
+        "public_selectionne": public,
         "taille_selectionnee": taille,
         "prix_min": prix_min,
         "prix_max": prix_max,
@@ -115,3 +162,12 @@ def detail_produit(request, pk):
     return render(request, "boutique/detail_produit.html", {
         "produit": produit,
     })
+
+
+def nos_marques(request):
+    marques = Marque.objects.annotate(nombre_produits=Count("produits"))
+    return render(request, "boutique/nos_marques.html", {
+        "marques": marques,
+    })
+
+
